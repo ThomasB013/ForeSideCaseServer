@@ -3,8 +3,15 @@
   "version": "1.0.0",
   "main": "server.js",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc && cp src/*.proto dist/",
+    "start": "node dist/server.js"
+  },
   "dependencies": {
     "@grpc/grpc-js": "^1.9.0",
     "@grpc/proto-loader": "^0.7.9"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
   }
 }
