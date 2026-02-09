@@ -52,27 +52,21 @@ async function makeOrder(
     [call.request.customer_name || "Anonymous", call.request.message || ""],
   );
 
+  const placeholders: string[] = [];
   const params = [newOrderResult.rows[0].id];
-
-  const query = call.request.beer_orders
-    .map((_, i) => {
-      `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ($1, $${2 + 2 * i}, 0, $${3 + 2 * i});`;
-    })
-    .join("\n");
-  call.request.beer_orders.forEach((b) => {
-    params.push(b.beer_id);
-    params.push(b.amount);
+  call.request.beer_orders.forEach((b, i) => {
+    placeholders.push(`($1, ${2 * i + 2}, ${2 * i + 3})`);
+    params.push(b.beer_id, b.amount);
   });
 
-  console.log(query);
+  const response = await db_client.query(
+    `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ${placeholders.join(", ")};`,
+    params,
+  );
 
-  call.request.beer_orders.map((beer_order, i) => {
-    [beer_order.amount, beer_order];
-  });
+  console.log(placeholders);
 
-  const response1 = await db_client.query(query, params);
-
-  console.log(response1);
+  console.log(response);
 
   callback(null);
 }
