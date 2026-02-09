@@ -5,6 +5,8 @@ async function main() {
   const db_client = await getDBClient();
   // Very bad, but I just want to test the database with typescript from ssh.
   const query = `
+    DROP TABLE IF EXISTS order_lines;
+    DROP TABLE IF EXISTS orders;
     DROP TABLE IF EXISTS beers;
 
     CREATE TABLE beers (
@@ -21,15 +23,12 @@ async function main() {
       })
       .join("\n")}
 
-    DROP TABLE IF EXISTS orders;
-
     CREATE TABLE orders (
         id SERIAL PRIMARY KEY,
         customer_name VARCHAR(40) NOT NULL,
         message VARCHAR(128)
     );
 
-    DROP TABLE IF EXISTS order_lines;
 
     CREATE TABLE order_lines (
         id SERIAL PRIMARY KEY,
