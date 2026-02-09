@@ -76,7 +76,7 @@ async function makeOrder(
 
   callback(null, {
     order_id: response.rows[0].id,
-    customer_name: response.rows[0].name,
+    customer_name: response.rows[0].customer_name,
     message: response.rows[0].message,
     beers_ordered: response.rows.map(({ amount, beer_id, beer_name }) => {
       return {
