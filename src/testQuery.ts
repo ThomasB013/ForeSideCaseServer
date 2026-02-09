@@ -32,6 +32,9 @@ async function connect() {
     database: process.env.DB_NAME,
     user: creds.username,
     password: creds.password,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   });
   await client.connect();
 
