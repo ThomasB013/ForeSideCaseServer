@@ -55,16 +55,17 @@ async function makeOrder(
   const placeholders: string[] = [];
   const params = [newOrderResult.rows[0].id];
   call.request.beer_orders.forEach((b, i) => {
-    placeholders.push(`($1, ${2 * i + 2}, ${2 * i + 3})`);
+    placeholders.push(`($1, ${2 * i + 2}, 0, ${2 * i + 3})`);
     params.push(b.beer_id, b.amount);
   });
+
+  console.log(placeholders);
+  console.log(params);
 
   const response = await db_client.query(
     `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ${placeholders.join(", ")};`,
     params,
   );
-
-  console.log(placeholders);
 
   console.log(response);
 
