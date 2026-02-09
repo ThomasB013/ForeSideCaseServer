@@ -88,11 +88,37 @@ async function makeOrder(
   });
 }
 
-function getOrderProgress(
+async function getOrderProgress(
   call: grpc.ServerUnaryCall<OrderProgressRequest, OrderProgressResponse>,
   callback: grpc.sendUnaryData<OrderProgressResponse>,
 ) {
-  //callback(null, { message: `Hello, progress` });
+  const db_client = await getDBClient();
+
+  const response = await db_client.query(
+    "SELECT orders.id, customer_name, message, name as beer_name, beer_id, total as amount_ordered, prepared as amount_prepared FROM orders, order_lines, beers WHERE orders.id = $1 AND order_id = orders.id AND beers.id = beer_id",
+    [call.request.order_id],
+  );
+
+  if (response.rows.length == 0) {
+    callback(null);
+    return;
+  }
+
+  callback(null, {
+    order_id: response.rows[0].id,
+    customer_name: response.rows[0].customer_name,
+    message: response.rows[0].message,
+    beers_ordered: response.rows.map(
+      ({ beer_id, beer_name, amount_ordered, amount_prepared }) => {
+        return {
+          beer_id,
+          beer_name,
+          amount_ordered,
+          amount_prepared,
+        };
+      },
+    ),
+  });
 }
 
 async function orderProgress(
