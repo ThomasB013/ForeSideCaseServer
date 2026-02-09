@@ -5,7 +5,7 @@ import { getDBClient } from "./connect";
 import { MenuResponse } from "./types";
 
 const PROTO_PATH = path.join(__dirname, "../proto/beer.proto");
-const PORT = "localhost:50051";
+const PORT = "0.0.0.0:50051";
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
