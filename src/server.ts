@@ -56,13 +56,15 @@ async function makeOrder(
 
   const query = call.request.beer_orders
     .map((_, i) => {
-      `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ($1, ${2 + 2 * i}, 0, $${3 + 2 * i});`;
+      `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ($1, $${2 + 2 * i}, 0, $${3 + 2 * i});`;
     })
     .join("\n");
   call.request.beer_orders.forEach((b) => {
     params.push(b.beer_id);
     params.push(b.amount);
   });
+
+  console.log(query);
 
   call.request.beer_orders.map((beer_order, i) => {
     [beer_order.amount, beer_order];
