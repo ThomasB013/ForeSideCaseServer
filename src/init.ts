@@ -3,7 +3,7 @@ import {
   GetSecretValueCommand,
 } from "@aws-sdk/client-secrets-manager";
 import { Client } from "pg";
-import beers from "./../config/initialBeers.json";
+import beers from "./initialBeers.json";
 
 const secretsClient = new SecretsManagerClient({});
 
