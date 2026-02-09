@@ -4,7 +4,7 @@
   "main": "server.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && cp src/*.proto dist/",
+    "build": "tsc",
     "start": "node dist/server.js",
     "init": "node dist/init.js"
   },
