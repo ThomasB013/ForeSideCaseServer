@@ -65,7 +65,7 @@ async function main() {
     
     ${beers
       .map((beer) => {
-        return `INSERT INTO beers VALUES (${beer.id}, ${beer.name}, ${beer.bartender_preparation_time}, ${beer.volume}, ${beer.pour_time});`;
+        return `INSERT INTO beers VALUES (${beer.id}, '${beer.name}', ${beer.bartender_preparation_time}, ${beer.volume}, ${beer.pour_time});`;
       })
       .join("\n")}
 
