@@ -59,7 +59,7 @@ message OrderProgressRequest {
 }
 
 // View how many beers have been made so far of a specific beer.
-message OrderBeerProgress {
+message BeerOrderProgress {
     int64 beer_id = 1;
     string beer_name = 2;
     int64 amount_ordered = 3;
@@ -71,11 +71,19 @@ message OrderProgressResponse {
     int64 order_id = 1;
     string customer_name = 2;
     string message = 3;
-    repeated OrderBeerProgress beers_ordered = 4;
+    repeated BeerOrderProgress beers_ordered = 4;
 }
 
+// Can be used by bartenders to communicate that they have prepared and poured a beer.
+message BeerCompletedRequest {
+    int64 order_id = 1;
+    int64 beer_id = 2;
+}
+
+
+
 // Simple message to pass a string message.
-message HealthCheck {
+message HealthCheckResponse {
     string message = 1;
 }
 
@@ -94,6 +102,9 @@ service BeerService {
     // Allows client to view the progress of a certain beer.
     rpc GetOrderProgress (OrderProgressRequest) returns (OrderProgressResponse);
 
+    // Allows bartenders to indicate that they have served a beer.
+    rpc OrderProgress (BeerCompletedRequest) returns (BeerOrderProgress); 
+
     // Easily check if server is up and running.
-    rpc Health (google.protobuf.Empty) returns (HealthCheck);
+    rpc Health (google.protobuf.Empty) returns (HealthCheckResponse);
 }

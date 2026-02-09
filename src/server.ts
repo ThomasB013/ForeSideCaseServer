@@ -2,7 +2,16 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import * as path from "path";
 import { getDBClient } from "./connect";
-import { MenuResponse } from "./types";
+import {
+  BeerCompletedRequest,
+  BeerOrderProgress,
+  HealthCheckResponse,
+  MenuResponse,
+  NewOrderRequest,
+  OrderProgressRequest,
+  OrderProgressResponse,
+  NewOrderResponse,
+} from "./types";
 
 const PROTO_PATH = path.join(__dirname, "../proto/beer.proto");
 const PORT = "0.0.0.0:50051";
@@ -32,22 +41,54 @@ async function getMenu(
   });
 }
 
-function makeOrder(
-  call: grpc.ServerUnaryCall<{ name: string }, { message: string }>,
-  callback: grpc.sendUnaryData<{ message: string }>,
+async function makeOrder(
+  call: grpc.ServerUnaryCall<NewOrderRequest, NewOrderResponse>,
+  callback: grpc.sendUnaryData<NewOrderResponse>,
 ) {
-  callback(null, { message: `Hello, order` });
+  const db_client = await getDBClient();
+
+  const newOrderResult = await db_client.query(
+    "INSERT INTO orders (customer_name, message) VALUES ($1, $2) RETURNING id;",
+    [call.request.customer_name || "Anonymous", call.request.message || ""],
+  );
+
+  const params = [newOrderResult.rows[0].id];
+
+  const query = call.request.beer_orders
+    .map((_, i) => {
+      `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ($1, ${2 + 2 * i}, 0, $${3 + 2 * i});`;
+    })
+    .join("\n");
+  call.request.beer_orders.forEach((b) => {
+    params.push(b.beer_id);
+    params.push(b.amount);
+  });
+
+  call.request.beer_orders.map((beer_order, i) => {
+    [beer_order.amount, beer_order];
+  });
+
+  const response1 = await db_client.query(query, params);
+
+  console.log(response1);
+
+  callback(null);
 }
 
 function getOrderProgress(
-  call: grpc.ServerUnaryCall<{ name: string }, { message: string }>,
-  callback: grpc.sendUnaryData<{ message: string }>,
+  call: grpc.ServerUnaryCall<OrderProgressRequest, OrderProgressResponse>,
+  callback: grpc.sendUnaryData<OrderProgressResponse>,
 ) {
-  callback(null, { message: `Hello, progress` });
+  //callback(null, { message: `Hello, progress` });
 }
 
+async function orderProgress(
+  call: grpc.ServerUnaryCall<BeerCompletedRequest, BeerOrderProgress>,
+  callback: grpc.sendUnaryData<BeerOrderProgress>,
+) {}
+
 function health(
-  _: grpc.ServerUnaryCall<{ name: string }, { message: string }>,
+  _: grpc.ServerUnaryCall<void, HealthCheckResponse>,
   callback: grpc.sendUnaryData<{ message: string }>,
 ) {
   callback(null, { message: `All is well!` });
@@ -59,6 +100,7 @@ server.addService(beerProto.BeerService.service, {
   GetMenu: getMenu,
   MakeOrder: makeOrder,
   GetOrderProgress: getOrderProgress,
+  OrderProgress: orderProgress,
   Health: health,
 });
 

@@ -35,7 +35,7 @@ type BeerOrderResponse = {
 export type NewOrderResponse = {
   order_id: number;
   customer_name: string;
-  message: string;
+  message?: string;
   beers_ordered: BeerOrderResponse[];
 };
 
@@ -43,7 +43,7 @@ export type OrderProgressRequest = {
   order_id: number;
 };
 
-type OrderBeerProgress = {
+export type BeerOrderProgress = {
   beer_id: number;
   beer_name: string;
   amount_ordered: number;
@@ -54,9 +54,14 @@ export type OrderProgressResponse = {
   order_id: number;
   customer_name: string;
   message: string;
-  beers_ordered: OrderBeerProgress[];
+  beers_ordered: BeerOrderProgress[];
 };
 
-export type HealthCheck = {
+export type BeerCompletedRequest = {
+  order_id: number;
+  beer_id: number;
+};
+
+export type HealthCheckResponse = {
   message: string;
 };
