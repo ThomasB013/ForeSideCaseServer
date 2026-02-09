@@ -2,6 +2,13 @@ syntax = "proto3";
 
 package proto;
 
+import "google/protobuf/empty.proto";
+
+
+/*
+    MESSAGES
+*/
+
 // All attributes of a particular beer.
 message BeerInfo {  
     int64 id = 1;
@@ -12,7 +19,7 @@ message BeerInfo {
 } 
 
 // Array of beers returned to get the menu.
-message MenuCardResponse {
+message MenuResponse {
     repeated BeerInfo beers  = 1;
 }
 
@@ -47,12 +54,12 @@ message NewOrderResponse {
 }
 
 // Request progress of a certain order.
-message ProgressRequest {
+message OrderProgressRequest {
     int64 order_id = 1;
 }
 
 // View how many beers have been made so far of a specific beer.
-message BeerOrderProgress {
+message OrderBeerProgress {
     int64 beer_id = 1;
     string beer_name = 2;
     int64 amount_ordered = 3;
@@ -60,9 +67,33 @@ message BeerOrderProgress {
 }
 
 // Communicate the order which it is about, give details and progress on all the beers.
-message ProgressResponse {
+message OrderProgressResponse {
     int64 order_id = 1;
     string customer_name = 2;
     string message = 3;
-    repeated BeerOrderProgress beers_ordered = 4;
+    repeated OrderBeerProgress beers_ordered = 4;
+}
+
+// Simple message to pass a string message.
+message HealthCheck {
+    string message = 1;
+}
+
+/*
+    SERVICE
+*/
+
+// This service shows communicate a menu, new orders and order progression
+service BeerService {
+    // Allows client to get the available beers
+    rpc GetMenu (google.protobuf.Empty) returns (MenuResponse);
+    
+    // Allows client to order beers
+    rpc MakeOrder (NewOrderRequest) returns (NewOrderResponse);
+
+    // Allows client to view the progress of a certain beer.
+    rpc GetOrderProgress (OrderProgressRequest) returns (OrderProgressResponse);
+
+    // Easily check if server is up and running.
+    rpc Health (google.protobuf.Empty) returns (HealthCheck);
 }

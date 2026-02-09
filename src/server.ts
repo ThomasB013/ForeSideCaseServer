@@ -2,7 +2,7 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import * as path from "path";
 
-const PROTO_PATH = path.join(__dirname, "../proto/hello.proto");
+const PROTO_PATH = path.join(__dirname, "../proto/beer.proto");
 const PORT = "0.0.0.0:50051";
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
@@ -13,19 +13,45 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true,
 });
 
-const helloProto = grpc.loadPackageDefinition(packageDefinition).hello as any;
+const beerProto = grpc.loadPackageDefinition(packageDefinition).beer as any;
+// const name = call.request.name || "world";
 
-function sayHello(
+function getMenu(
   call: grpc.ServerUnaryCall<{ name: string }, { message: string }>,
   callback: grpc.sendUnaryData<{ message: string }>,
 ) {
-  const name = call.request.name || "world";
-  callback(null, { message: `Hello, ${name}! 👋` });
+  callback(null, { message: `Hello menu` });
+}
+
+function makeOrder(
+  call: grpc.ServerUnaryCall<{ name: string }, { message: string }>,
+  callback: grpc.sendUnaryData<{ message: string }>,
+) {
+  callback(null, { message: `Hello, order` });
+}
+
+function getOrderProgress(
+  call: grpc.ServerUnaryCall<{ name: string }, { message: string }>,
+  callback: grpc.sendUnaryData<{ message: string }>,
+) {
+  callback(null, { message: `Hello, progress` });
+}
+
+function health(
+  _: grpc.ServerUnaryCall<{ name: string }, { message: string }>,
+  callback: grpc.sendUnaryData<{ message: string }>,
+) {
+  callback(null, { message: `All is well!` });
 }
 
 const server = new grpc.Server();
 
-server.addService(helloProto.HelloService.service, { SayHello: sayHello });
+server.addService(beerProto.BeerService.service, {
+  GetMenu: getMenu,
+  MakeOrder: makeOrder,
+  GetOrderProgress: getOrderProgress,
+  Health: health,
+});
 server.bindAsync(PORT, grpc.ServerCredentials.createInsecure(), () => {
   console.log(`🚀 gRPC server running on ${PORT}`);
 });
