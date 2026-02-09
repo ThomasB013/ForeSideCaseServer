@@ -2,7 +2,7 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import * as path from "path";
 
-const PROTO_PATH = path.join(__dirname, "../src/hello.proto");
+const PROTO_PATH = path.join(__dirname, "../config/hello.proto");
 const PORT = "0.0.0.0:50051";
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {

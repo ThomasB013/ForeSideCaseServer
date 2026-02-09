@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/client-secrets-manager";
 import { Client } from "pg";
 import * as fs from "fs";
-import beers from "./initialBeers.json";
+import beers from "./../config/initialBeers.json";
 
 const secretsClient = new SecretsManagerClient({});
 

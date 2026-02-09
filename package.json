@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc && cp src/*.proto dist/",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "init": "node dist/init.js"
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.985.0",
