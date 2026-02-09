@@ -13,7 +13,7 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true,
 });
 
-const beerProto = grpc.loadPackageDefinition(packageDefinition).beer as any;
+const beerProto = grpc.loadPackageDefinition(packageDefinition).proto as any;
 // const name = call.request.name || "world";
 
 function getMenu(
@@ -52,6 +52,7 @@ server.addService(beerProto.BeerService.service, {
   GetOrderProgress: getOrderProgress,
   Health: health,
 });
+
 server.bindAsync(PORT, grpc.ServerCredentials.createInsecure(), () => {
   console.log(`🚀 gRPC server running on ${PORT}`);
 });
