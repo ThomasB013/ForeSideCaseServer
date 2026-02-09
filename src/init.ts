@@ -63,9 +63,11 @@ async function main() {
         pour_time SMALLINT NOT NULL UNIQUE
     );
     
-    ${beers.map((beer) => {
-      `INSERT INTO beers VALUES (${beer.id}, ${beer.name}, ${beer.bartender_preparation_time}, ${beer.volume}, ${beer.pour_time});\n`;
-    })}
+    ${beers
+      .map((beer) => {
+        return `INSERT INTO beers VALUES (${beer.id}, ${beer.name}, ${beer.bartender_preparation_time}, ${beer.volume}, ${beer.pour_time});`;
+      })
+      .join("\n")}
 
     DROP TABLE IF EXISTS orders;
 
