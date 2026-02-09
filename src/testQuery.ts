@@ -59,4 +59,8 @@ async function main() {
   await db_client.end();
 }
 
-main().then(() => console.log("Done executing"));
+main()
+  .then(() => console.log("Done executing"))
+  .catch((e) => {
+    console.log(e);
+  });

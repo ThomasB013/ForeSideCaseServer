@@ -56,29 +56,42 @@ async function main() {
     DROP TABLE IF EXISTS beers;
 
     CREATE TABLE beers (
-        id INTEGER PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         name VARCHAR(40) NOT NULL UNIQUE,
         bartender_preparation_time SMALLINT NOT NULL UNIQUE,
         volume SMALLINT NOT NULL UNIQUE,
-        POUR_TIME SMALLINT NOT NULL UNIQUE,
+        pour_time SMALLINT NOT NULL UNIQUE
+    );
+    
+    ${beers.map((beer) => {
+      `INSERT INTO beers VALUES (${beer.id}, ${beer.name}, ${beer.bartender_preparation_time}, ${beer.volume}, ${beer.pour_time});\n`;
+    })}
+
+    DROP TABLE IF EXISTS orders;
+
+    CREATE TABLE orders (
+        id SERIAL PRIMARY KEY,
+        customer_name VARCHAR(40) NOT NULL,
+        message VARCHAR(128)
     );
 
-    INSERT INTO beers (
-        1,
-        'Biertje',
-        4,
-        5,
-        6
+    DROP TABLE IF EXISTS order_lines;
+
+    CREATE TABLE order_lines (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER NOT NULL REFERENCES orders(id),
+        beer_id INTEGER NOT NULL REFERENCES beers(id),
+        prepared SMALLINT NOT NULL,
+        total SMALLINT NOT NULL
     );
 `;
-  //beers.forEach();
 
-  console.log(beers);
-
-  const result = await db_client.query(query);
-  console.log(JSON.stringify(result));
+  console.log(`Executing query\n${query}`);
+  await db_client.query(query);
 
   await db_client.end();
 }
 
-main().then(() => console.log("Done initializing database"));
+main()
+  .catch((e) => console.error(`Error while initializing ${e}`, e))
+  .finally(() => console.log("Done intializing"));
