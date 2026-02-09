@@ -6,7 +6,13 @@ import { Client } from "pg";
 
 const secretsClient = new SecretsManagerClient({});
 
-const ENV_KEYS = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_SECRET_ARN"];
+const ENV_KEYS = [
+  "DB_HOST",
+  "DB_PORT",
+  "DB_NAME",
+  "DB_SECRET_ARN",
+  "AWS_REGION",
+];
 
 ENV_KEYS.forEach((key) => {
   if (process.env[key] == null) {

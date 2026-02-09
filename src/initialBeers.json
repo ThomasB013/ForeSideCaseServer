@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "name": "Blik Pitt",
+    "bartender_preparation_time": 10,
+    "volume": 50,
+    "pour_time": 5
+  },
+  {
+    "id": 2,
+    "name": "Glas Heiniken",
+    "bartender_preparation_time": 20,
+    "volume": 29,
+    "pour_time": 15
+  },
+  {
+    "id": 3,
+    "name": "Pills Grolssch",
+    "bartender_preparation_time": 21,
+    "volume": 30,
+    "pour_time": 16
+  },
+  {
+    "id": 4,
+    "name": "Heiniken Tap",
+    "bartender_preparation_time": 11,
+    "volume": 31,
+    "pour_time": 6
+  },
+  {
+    "id": 5,
+    "name": "Heiniken Tap XL",
+    "bartender_preparation_time": 12,
+    "volume": 700,
+    "pour_time": 10
+  },
+  {
+    "id": 6,
+    "name": "Alcohol vrij blikkie",
+    "bartender_preparation_time": 5,
+    "volume": 32,
+    "pour_time": 0
+  },
+  {
+    "id": 7,
+    "name": "Veddet - Flesje",
+    "bartender_preparation_time": 15,
+    "volume": 33,
+    "pour_time": 1
+  },
+  {
+    "id": 8,
+    "name": "Leffe Blond",
+    "bartender_preparation_time": 13,
+    "volume": 34,
+    "pour_time": 11
+  },
+  {
+    "id": 9,
+    "name": "Leffe Blond met Citroen",
+    "bartender_preparation_time": 14,
+    "volume": 35,
+    "pour_time": 12
+  },
+  {
+    "id": 10,
+    "name": "Bier Pakket",
+    "bartender_preparation_time": 80,
+    "volume": 200,
+    "pour_time": 40
+  }
+]
