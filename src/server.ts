@@ -62,6 +62,10 @@ async function makeOrder(
   console.log(placeholders);
   console.log(params);
 
+  console.log(
+    `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ${placeholders.join(", ")};`,
+  );
+
   const response = await db_client.query(
     `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ${placeholders.join(", ")};`,
     params,
