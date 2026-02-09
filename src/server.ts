@@ -55,25 +55,37 @@ async function makeOrder(
   const placeholders: string[] = [];
   const params = [newOrderResult.rows[0].id];
   call.request.beer_orders.forEach((b, i) => {
-    placeholders.push(`($1, ${2 * i + 2}, 0, ${2 * i + 3})`);
+    placeholders.push(`($1, $${2 * i + 2}, 0, $${2 * i + 3})`);
     params.push(b.beer_id, b.amount);
   });
 
-  console.log(placeholders);
-  console.log(params);
-
-  console.log(
-    `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ${placeholders.join(", ")};`,
-  );
-
-  const response = await db_client.query(
+  await db_client.query(
     `INSERT INTO order_lines (order_id, beer_id, prepared, total) VALUES ${placeholders.join(", ")};`,
     params,
   );
 
-  console.log(response);
+  const response = await db_client.query(
+    "SELECT orders.id, customer_name, message, name as beer_name, beer_id, total as amount FROM orders, order_lines, beers WHERE orders.id = $1 AND order_id = orders.id AND beers.id = beer_id",
+    [newOrderResult.rows[0].id],
+  );
 
-  callback(null);
+  if (response.rows.length == 0) {
+    callback(null);
+    return;
+  }
+
+  callback(null, {
+    order_id: response.rows[0].id,
+    customer_name: response.rows[0].name,
+    message: response.rows[0].message,
+    beers_ordered: response.rows.map(({ amount, beer_id, beer_name }) => {
+      return {
+        amount,
+        beer_id,
+        beer_name,
+      };
+    }),
+  });
 }
 
 function getOrderProgress(
