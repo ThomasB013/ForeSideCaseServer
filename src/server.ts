@@ -1,9 +1,11 @@
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import * as path from "path";
+import { getDBClient } from "./connect";
+import { MenuResponse } from "./types";
 
 const PROTO_PATH = path.join(__dirname, "../proto/beer.proto");
-const PORT = "0.0.0.0:50051";
+const PORT = "localhost:50051";
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
@@ -14,13 +16,20 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 });
 
 const beerProto = grpc.loadPackageDefinition(packageDefinition).proto as any;
-// const name = call.request.name || "world";
 
-function getMenu(
-  call: grpc.ServerUnaryCall<{ name: string }, { message: string }>,
-  callback: grpc.sendUnaryData<{ message: string }>,
+async function getMenu(
+  _: grpc.ServerUnaryCall<void, MenuResponse>,
+  callback: grpc.sendUnaryData<MenuResponse>,
 ) {
-  callback(null, { message: `Hello menu` });
+  const db_client = await getDBClient();
+
+  const result = await db_client.query(`
+    SELECT * FROM BEERS ORDER BY id
+  `);
+
+  callback(null, {
+    beers: result.rows,
+  });
 }
 
 function makeOrder(
