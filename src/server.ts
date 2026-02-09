@@ -64,21 +64,21 @@ async function makeOrder(
     params,
   );
 
-  const response = await db_client.query(
+  const result = await db_client.query(
     "SELECT orders.id, customer_name, message, name as beer_name, beer_id, total as amount FROM orders, order_lines, beers WHERE orders.id = $1 AND order_id = orders.id AND beers.id = beer_id",
     [newOrderResult.rows[0].id],
   );
 
-  if (response.rows.length == 0) {
+  if (result.rows.length == 0) {
     callback(null);
     return;
   }
 
   callback(null, {
-    order_id: response.rows[0].id,
-    customer_name: response.rows[0].customer_name,
-    message: response.rows[0].message,
-    beers_ordered: response.rows.map(({ amount, beer_id, beer_name }) => {
+    order_id: result.rows[0].id,
+    customer_name: result.rows[0].customer_name,
+    message: result.rows[0].message,
+    beers_ordered: result.rows.map(({ amount, beer_id, beer_name }) => {
       return {
         amount,
         beer_id,
@@ -94,21 +94,21 @@ async function getOrderProgress(
 ) {
   const db_client = await getDBClient();
 
-  const response = await db_client.query(
+  const result = await db_client.query(
     "SELECT orders.id, customer_name, message, name as beer_name, beer_id, total as amount_ordered, prepared as amount_prepared FROM orders, order_lines, beers WHERE orders.id = $1 AND order_id = orders.id AND beers.id = beer_id",
     [call.request.order_id],
   );
 
-  if (response.rows.length == 0) {
+  if (result.rows.length == 0) {
     callback(null);
     return;
   }
 
   callback(null, {
-    order_id: response.rows[0].id,
-    customer_name: response.rows[0].customer_name,
-    message: response.rows[0].message,
-    beers_ordered: response.rows.map(
+    order_id: result.rows[0].id,
+    customer_name: result.rows[0].customer_name,
+    message: result.rows[0].message,
+    beers_ordered: result.rows.map(
       ({ beer_id, beer_name, amount_ordered, amount_prepared }) => {
         return {
           beer_id,
@@ -124,7 +124,22 @@ async function getOrderProgress(
 async function orderProgress(
   call: grpc.ServerUnaryCall<BeerCompletedRequest, BeerOrderProgress>,
   callback: grpc.sendUnaryData<BeerOrderProgress>,
-) {}
+) {
+  const db_client = await getDBClient();
+  const { order_id, beer_id } = call.request;
+
+  await db_client.query(
+    "UPDATE order_lines SET prepared = prepared + 1 WHERE order_id=$1 AND beer_id=$2",
+    [order_id, beer_id],
+  );
+
+  const result = await db_client.query(
+    "SELECT total AS amount_ordered, prepared AS amount_prepared, beer_id, name as beer_name FROM beers, order_lines WHERE beers.id = beer_id AND order_id=$1 AND beer_id=$2",
+    [order_id, beer_id],
+  );
+
+  callback(null, result.rows[0]);
+}
 
 function health(
   _: grpc.ServerUnaryCall<void, HealthCheckResponse>,
