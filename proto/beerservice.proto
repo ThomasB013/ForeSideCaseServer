@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package proto;
+
+// All attributes of a particular beer.
+message BeerInfo {  
+    int64 id = 1;
+    string name = 2;
+    int32 bartender_preperation_time = 3;
+    int32 volume = 4;
+    int32 pour_time = 5;
+} 
+
+// Array of beers returned to get the menu.
+message MenuCardResponse {
+    repeated BeerInfo beers  = 1;
+}
+
+// Data to communicate.
+message BeerOrderRequest {
+    int64 beer_id  = 1;
+    int64 amount = 2;
+}
+
+
+// New order request
+message NewOrderRequest {
+    string customer_name = 1;
+    string message = 2;
+    repeated BeerOrderRequest beer_orders = 3;
+}
+
+// Data to be returnred for confirmation. Add name field to allow easier UI development.
+message BeerOrderResponse {
+    int64 beer_id = 1;
+    string beer_name = 2;
+    int64 amount = 3;
+}
+
+
+// Data to confirm the new order.
+message NewOrderResponse {
+    int64 order_id = 1;
+    string customer_name = 2;
+    string message = 3;
+    repeated BeerOrderResponse beers_ordered = 4;
+}
+
+// Request progress of a certain order.
+message ProgressRequest {
+    int64 order_id = 1;
+}
+
+// View how many beers have been made so far of a specific beer.
+message BeerOrderProgress {
+    int64 beer_id = 1;
+    string beer_name = 2;
+    int64 amount_ordered = 3;
+    int64 amount_prepared = 4;
+}
+
+// Communicate the order which it is about, give details and progress on all the beers.
+message ProgressResponse {
+    int64 order_id = 1;
+    string customer_name = 2;
+    string message = 3;
+    repeated BeerOrderProgress beers_ordered = 4;
+}

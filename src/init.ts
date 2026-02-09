@@ -84,7 +84,8 @@ async function main() {
         order_id INTEGER NOT NULL REFERENCES orders(id),
         beer_id INTEGER NOT NULL REFERENCES beers(id),
         prepared SMALLINT NOT NULL,
-        total SMALLINT NOT NULL
+        total SMALLINT NOT NULL,
+        UNIQUE (order_id, beer_id)
     );
 `;
 
