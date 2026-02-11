@@ -3,12 +3,16 @@
     Improvement: generate it from beer.proto.
 */
 
-type BeerInfo = {
+export type BeerInfo = {
   id: number;
   name: string;
   bartender_preperation_time: number;
   volume: number;
   pour_time: number;
+};
+
+export type BeerInfoRequest = {
+  beer_id: number;
 };
 
 export type MenuResponse = {

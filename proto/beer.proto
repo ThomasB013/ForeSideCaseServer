@@ -18,6 +18,11 @@ message BeerInfo {
     int32 pour_time = 5;
 } 
 
+// Message for request about a particular beer.
+message BeerInfoRequest {
+    int64 beer_id = 1;
+}
+
 // Array of beers returned to get the menu.
 message MenuResponse {
     repeated BeerInfo beers  = 1;
@@ -96,6 +101,9 @@ service BeerService {
     // Allows client to get the available beers
     rpc GetMenu (google.protobuf.Empty) returns (MenuResponse);
     
+    // Get info about a single beer
+    rpc GetBeer(BeerInfoRequest) returns (BeerInfo);
+
     // Allows client to order beers
     rpc MakeOrder (NewOrderRequest) returns (NewOrderResponse);
 

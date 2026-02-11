@@ -11,6 +11,8 @@ import {
   OrderProgressRequest,
   OrderProgressResponse,
   NewOrderResponse,
+  BeerInfoRequest,
+  BeerInfo,
 } from "./types";
 
 const PROTO_PATH = path.join(__dirname, "../proto/beer.proto");
@@ -33,11 +35,35 @@ async function getMenu(
   const db_client = await getDBClient();
 
   const result = await db_client.query(`
-    SELECT * FROM BEERS ORDER BY id
+    SELECT * FROM beers ORDER BY id
   `);
 
   callback(null, {
     beers: result.rows,
+  });
+}
+
+async function getBeer(
+  call: grpc.ServerUnaryCall<BeerInfoRequest, BeerInfo>,
+  callback: grpc.sendUnaryData<BeerInfo>,
+) {
+  try {
+    const db_client = await getDBClient();
+    const result = await db_client.query(`SELECT * FROM beers WHERE id=$1`, [
+      call.request.beer_id,
+    ]);
+    if (result.rows.length == 1) {
+      return callback(null, result.rows[0]);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  callback(null, {
+    id: call.request.beer_id,
+    name: "",
+    bartender_preperation_time: 0,
+    volume: 0,
+    pour_time: 0,
   });
 }
 
@@ -152,6 +178,7 @@ const server = new grpc.Server();
 
 server.addService(beerProto.BeerService.service, {
   GetMenu: getMenu,
+  GetBeer: getBeer,
   MakeOrder: makeOrder,
   GetOrderProgress: getOrderProgress,
   OrderProgress: orderProgress,
