@@ -158,7 +158,7 @@ async function increaseOrderProgress(
     );
 
     const result = await db_client.query(
-      "SELECT total AS amount_ordered, prepared AS amount_prepared, beer_id, name as beer_name FROM beers, order_lines WHERE beers.id = beer_id AND order_id=$1 AND beer_id=$2",
+      "SELECT total AS amount_ordered, prepared AS amount_prepared, beer_id, order_id, name as beer_name FROM beers, order_lines WHERE beers.id = beer_id AND order_id=$1 AND beer_id=$2",
       [order_id, beer_id],
     );
     if (result.rows.length == 1) {
@@ -169,6 +169,7 @@ async function increaseOrderProgress(
   }
   callback(null, {
     beer_id: call.request.beer_id,
+    order_id: call.request.order_id,
   });
 }
 
