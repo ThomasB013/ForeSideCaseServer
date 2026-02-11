@@ -161,7 +161,9 @@ async function increaseOrderProgress(
       "SELECT total AS amount_ordered, prepared AS amount_prepared, beer_id, name as beer_name FROM beers, order_lines WHERE beers.id = beer_id AND order_id=$1 AND beer_id=$2",
       [order_id, beer_id],
     );
-    return callback(null, result.rows[0]);
+    if (result.rows.length == 1) {
+      return callback(null, result.rows[0]);
+    }
   } catch (e) {
     console.error(e);
   }
