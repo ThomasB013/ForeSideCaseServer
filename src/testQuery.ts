@@ -3,7 +3,7 @@ import { getDBClient } from "./connect";
 async function main() {
   const db_client = await getDBClient();
 
-  // Very bad, but I just want to test the database with typescript from ssh.
+  // This is just to test the database with typescript from ssh.
   const query = process.argv[2];
   console.log("Got query", query);
 

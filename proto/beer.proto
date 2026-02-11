@@ -9,7 +9,7 @@ import "google/protobuf/empty.proto";
     MESSAGES
 */
 
-// All attributes of a particular beer.
+// Message for info about a single beer type.
 message BeerInfo {  
     int64 id = 1;
     string name = 2;
@@ -18,39 +18,37 @@ message BeerInfo {
     int32 pour_time = 5;
 } 
 
-// Message for request about a particular beer.
+// Message for request about a particular beer type.
 message BeerInfoRequest {
     int64 beer_id = 1;
 }
 
-// Array of beers returned to get the menu.
+// Message containing an array of beers, used to return the available menu.
 message MenuResponse {
     repeated BeerInfo beers  = 1;
 }
 
-// Data to communicate.
+// Message to indicate how many beers of what type are wanted.
 message BeerOrderRequest {
     int64 beer_id  = 1;
     int64 amount = 2;
 }
 
-
-// New order request
+// Message to put a new beer order on a customer's name. Optionally a message for the bartenders.
 message NewOrderRequest {
     string customer_name = 1;
     string message = 2;
     repeated BeerOrderRequest beer_orders = 3;
 }
 
-// Data to be returnred for confirmation. Add name field to allow easier UI development.
+// Message to confirm how many beers of a specific type where ordered. Also give back name field to allow easier UI development (e.g. making a receipt directly from the response of this service).
 message BeerOrderResponse {
     int64 beer_id = 1;
     string beer_name = 2;
     int64 amount = 3;
 }
 
-
-// Data to confirm the new order.
+// Message to confirm a newly made order, and also give back the order id associated with it.
 message NewOrderResponse {
     int64 order_id = 1;
     string customer_name = 2;
@@ -58,12 +56,12 @@ message NewOrderResponse {
     repeated BeerOrderResponse beers_ordered = 4;
 }
 
-// Request progress of a certain order.
+// Message to request the progress of a certain order.
 message OrderProgressRequest {
     int64 order_id = 1;
 }
 
-// View how many beers have been made so far of a specific beer.
+// Message to indicate the progression on a specific beer. Associated order id will be added by the message that uses BeerOrderProgress
 message BeerOrderProgress {
     int64 beer_id = 1;
     string beer_name = 2;
@@ -71,7 +69,7 @@ message BeerOrderProgress {
     int64 amount_prepared = 4;
 }
 
-// Communicate the order which it is about, give details and progress on all the beers.
+// Message to indicate the progression of a specific order.
 message OrderProgressResponse {
     int64 order_id = 1;
     string customer_name = 2;
@@ -79,15 +77,13 @@ message OrderProgressResponse {
     repeated BeerOrderProgress beers_ordered = 4;
 }
 
-// Can be used by bartenders to communicate that they have prepared and poured a beer.
+// Message to indicate that a specific beer has been prepared for a specific order. This is to be used by the bartenders. 
 message BeerCompletedRequest {
     int64 order_id = 1;
     int64 beer_id = 2;
 }
 
-
-
-// Simple message to pass a string message.
+// Message to pass a simple message indicating that the service is up and running.
 message HealthCheckResponse {
     string message = 1;
 }
@@ -96,23 +92,23 @@ message HealthCheckResponse {
     SERVICE
 */
 
-// This service shows communicate a menu, new orders and order progression
+// This service allows for beer ordering for customers and preparing by bartenders. For specific data layout go to the documentation associated with the messages in each method.
 service BeerService {
-    // Allows client to get the available beers
+    // This method returns an array of all avaible beers.
     rpc GetMenu (google.protobuf.Empty) returns (MenuResponse);
     
-    // Get info about a single beer
+    // This method returns info about a single beer type.
     rpc GetBeer(BeerInfoRequest) returns (BeerInfo);
 
-    // Allows client to order beers
+    // This method can be used to register a new order. It returns a confirmation with the id of the newly made order, which can be used for tracking.
     rpc MakeOrder (NewOrderRequest) returns (NewOrderResponse);
 
-    // Allows client to view the progress of a certain beer.
+    // This method can be used to get the progression on a specific order, identified by order id.
     rpc GetOrderProgress (OrderProgressRequest) returns (OrderProgressResponse);
 
-    // Allows bartenders to indicate that they have served a beer.
+    // This method is to be used by bartenders to indicate that they have completed a beer on a specific order.
     rpc IncreaseOrderProgress (BeerCompletedRequest) returns (BeerOrderProgress); 
 
-    // Easily check if server is up and running.
+    // This method can be used to check if the server is responding.
     rpc Health (google.protobuf.Empty) returns (HealthCheckResponse);
 }
