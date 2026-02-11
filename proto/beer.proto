@@ -111,7 +111,7 @@ service BeerService {
     rpc GetOrderProgress (OrderProgressRequest) returns (OrderProgressResponse);
 
     // Allows bartenders to indicate that they have served a beer.
-    rpc OrderProgress (BeerCompletedRequest) returns (BeerOrderProgress); 
+    rpc IncreaseOrderProgress (BeerCompletedRequest) returns (BeerOrderProgress); 
 
     // Easily check if server is up and running.
     rpc Health (google.protobuf.Empty) returns (HealthCheckResponse);
