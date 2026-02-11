@@ -125,8 +125,9 @@ async function getOrderProgress(
       customer_name: result.rows[0].customer_name,
       message: result.rows[0].message,
       beers_ordered: result.rows.map(
-        ({ beer_id, beer_name, amount_ordered, amount_prepared }) => {
+        ({ id, beer_id, beer_name, amount_ordered, amount_prepared }) => {
           return {
+            id,
             beer_id,
             beer_name,
             amount_ordered,

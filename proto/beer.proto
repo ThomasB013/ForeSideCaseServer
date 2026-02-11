@@ -61,12 +61,13 @@ message OrderProgressRequest {
     int64 order_id = 1;
 }
 
-// Message to indicate the progression on a specific beer. Associated order id will be added by the message that uses BeerOrderProgress
+// Message to indicate the progression on a specific beer.
 message BeerOrderProgress {
     int64 beer_id = 1;
     string beer_name = 2;
     int64 amount_ordered = 3;
     int64 amount_prepared = 4;
+    int64 order_id = 5;
 }
 
 // Message to indicate the progression of a specific order.
